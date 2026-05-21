@@ -5,10 +5,48 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Inches
 from docx.text.paragraph import Paragraph
+from PIL import Image, ImageDraw, ImageFont
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DOCX_PATH = next(ROOT.glob("*作答版.docx"))
+DOCX_CANDIDATES = [p for p in ROOT.glob("*作答版*.docx") if not p.name.startswith("~$")]
+DOCX_PATH = next((p for p in DOCX_CANDIDATES if "代码截图" in p.name), DOCX_CANDIDATES[0])
+CODE_SCREENSHOT_DIR = ROOT / "code_screenshots"
+
+
+def make_code_screenshots(code_file, lines_per_image=34):
+    CODE_SCREENSHOT_DIR.mkdir(exist_ok=True)
+    src = ROOT / "code" / code_file
+    lines = src.read_text(encoding="utf-8").splitlines()
+    font_path = Path("C:/Windows/Fonts/consola.ttf")
+    font = ImageFont.truetype(str(font_path), 22) if font_path.exists() else ImageFont.load_default()
+    line_height = 30
+    padding_x = 28
+    padding_y = 24
+    gutter_width = 54
+    max_text_width = 0
+    for line in lines:
+        box = font.getbbox(line or " ")
+        max_text_width = max(max_text_width, box[2] - box[0])
+
+    width = max(1100, padding_x * 2 + gutter_width + max_text_width)
+    outputs = []
+    for part, start in enumerate(range(0, len(lines), lines_per_image), start=1):
+        chunk = lines[start : start + lines_per_image]
+        height = padding_y * 2 + line_height * len(chunk)
+        image = Image.new("RGB", (width, height), "white")
+        draw = ImageDraw.Draw(image)
+        draw.rectangle([0, 0, width - 1, height - 1], outline=(210, 210, 210), width=2)
+        draw.rectangle([0, 0, gutter_width + padding_x, height], fill=(246, 248, 250))
+        for idx, line in enumerate(chunk):
+            y = padding_y + idx * line_height
+            line_no = str(start + idx + 1).rjust(3)
+            draw.text((padding_x, y), line_no, font=font, fill=(120, 120, 120))
+            draw.text((padding_x + gutter_width, y), line, font=font, fill=(30, 30, 30))
+        out = CODE_SCREENSHOT_DIR / f"{Path(code_file).stem}_{part:02d}.jpg"
+        image.save(out, "JPEG", quality=90, optimize=True)
+        outputs.append(out)
+    return outputs
 
 
 def main():
@@ -59,8 +97,10 @@ def main():
         for img, cap in image_caps:
             cursor = insert_image_after(cursor, ROOT / "results" / img, cap)
         for fn in code_files:
-            cursor = insert_paragraph_after(cursor, f"程序清单：{fn}", bold=True)
-            cursor = insert_paragraph_after(cursor, code_text(fn))
+            screenshots = make_code_screenshots(fn)
+            for idx, screenshot in enumerate(screenshots, start=1):
+                suffix = f"（{idx}/{len(screenshots)}）" if len(screenshots) > 1 else ""
+                cursor = insert_image_after(cursor, screenshot, f"程序截图：{fn}{suffix}")
 
     blocks = [
         (
