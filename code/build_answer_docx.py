@@ -91,11 +91,12 @@ def main():
 
     def add_experiment_block(anchor_text, title, code_files, image_caps, analysis):
         cursor = find_anchor(anchor_text)
-        cursor = insert_paragraph_after(cursor, f"{title} 实验结果与分析：", bold=True)
-        for line in analysis:
-            cursor = insert_paragraph_after(cursor, line)
+        cursor = insert_paragraph_after(cursor, f"{title} 实验结果：", bold=True)
         for img, cap in image_caps:
             cursor = insert_image_after(cursor, ROOT / "results" / img, cap)
+        cursor = insert_paragraph_after(cursor, f"{title} 结果分析：", bold=True)
+        for line in analysis:
+            cursor = insert_paragraph_after(cursor, line)
         for fn in code_files:
             screenshots = make_code_screenshots(fn)
             for idx, screenshot in enumerate(screenshots, start=1):
