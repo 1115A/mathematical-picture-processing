@@ -14,7 +14,7 @@ for k = 1:numel(densityList)
     nexttile; imshow(noisy, []); title(sprintf('Noisy, density = %.1f', densityList(k)));
     nexttile(k + 3); imshow(filtered, []); title('3x3 median filtering');
 end
-exportgraphics(fig1, fullfile(rootDir, 'results', 'exp3_2_median_same_template.png'), 'Resolution', 180);
+exportgraphics(fig1, fullfile(rootDir, 'results', 'exp3_2_median_same_template.jpg'), 'Resolution', 180);
 close(fig1);
 
 noisy05 = imnoise(img, 'salt & pepper', 0.5);
@@ -26,7 +26,7 @@ for k = 1:numel(templateList)
     filtered = medfilt2(noisy05, [templateList(k), templateList(k)]);
     nexttile; imshow(filtered, []); title(sprintf('%dx%d median filtering', templateList(k), templateList(k)));
 end
-exportgraphics(fig2, fullfile(rootDir, 'results', 'exp3_2_median_different_templates.png'), 'Resolution', 180);
+exportgraphics(fig2, fullfile(rootDir, 'results', 'exp3_2_median_different_templates.jpg'), 'Resolution', 180);
 close(fig2);
 
 gaussianNoisy = imnoise(img, 'gaussian', 0, 0.2);
@@ -45,6 +45,6 @@ nexttile; imshow(gaussianMedian, []); title('3x3 median filtering');
 nexttile; imshow(saltPepperNoisy, []); title('Salt & pepper noise');
 nexttile; imshow(spMean, []); title('3x3 mean filtering');
 nexttile; imshow(spMedian, []); title('3x3 median filtering');
-exportgraphics(fig3, fullfile(rootDir, 'results', 'exp3_2_mean_vs_median.png'), 'Resolution', 180);
+exportgraphics(fig3, fullfile(rootDir, 'results', 'exp3_2_mean_vs_median.jpg'), 'Resolution', 180);
 close(fig3);
 end

@@ -23,7 +23,7 @@ for k = 1:numel(templateSizes)
     filtered = local_mean_filter(saltPepperNoisy, n);
     nexttile; imshow(filtered, []); title(sprintf('%dx%d custom mean', n, n));
 end
-exportgraphics(fig1, fullfile(rootDir, 'results', 'exp3_4_custom_mean_filter.png'), 'Resolution', 180);
+exportgraphics(fig1, fullfile(rootDir, 'results', 'exp3_4_custom_mean_filter.jpg'), 'Resolution', 180);
 close(fig1);
 
 fig2 = figure('Visible', 'off', 'Color', 'w', 'Position', [100 100 1400 900]);
@@ -40,7 +40,7 @@ for k = 1:numel(templateSizes)
     filtered = local_median_filter(saltPepperNoisy, n);
     nexttile; imshow(filtered, []); title(sprintf('%dx%d custom median', n, n));
 end
-exportgraphics(fig2, fullfile(rootDir, 'results', 'exp3_4_custom_median_filter.png'), 'Resolution', 180);
+exportgraphics(fig2, fullfile(rootDir, 'results', 'exp3_4_custom_median_filter.jpg'), 'Resolution', 180);
 close(fig2);
 end
 

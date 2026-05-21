@@ -16,6 +16,6 @@ tiledlayout(1, 3, 'Padding', 'compact', 'TileSpacing', 'compact');
 nexttile; imshow(img, []); title('Original building.tif');
 nexttile; imshow(sharpened, []); title('Laplacian sharpening');
 nexttile; imshow(smoothed, []); title('Mean filtering');
-exportgraphics(fig, fullfile(rootDir, 'results', 'exp3_3_sharpening_and_mean.png'), 'Resolution', 180);
+exportgraphics(fig, fullfile(rootDir, 'results', 'exp3_3_sharpening_and_mean.jpg'), 'Resolution', 180);
 close(fig);
 end
